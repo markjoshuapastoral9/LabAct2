@@ -1,0 +1,88 @@
+PastoralMark Joshua
+<?php
+
+class Book {
+    public $title;
+    protected $author;
+    private $price;
+
+    public function __construct($title, $author, $price) {
+        $this->title = $title;
+        $this->author = $author;
+        $this->price = $price;
+    }
+
+    public function getDetails() {
+        return "Title: " . $this->title . ", Author: " . $this->author . ", Price: $" . $this->price;
+    }
+
+    public function setPrice($price) {
+        $this->price = $price;
+    }
+
+    public function __call($name, $arguments) {
+        if ($name === 'updateStock') {
+            // Simulate updating stock
+            echo "Stock updated for '" . $this->title . "' with arguments: " . implode(', ', $arguments) . "\n";
+        } else {
+            echo "Method " . $name . " not found.\n";
+        }
+    }
+}
+
+class Library {
+    private $books = [];
+    public $name;
+
+    public function __construct($name) {
+        $this->name = $name;
+    }
+
+    public function addBook(Book $book) {
+        $this->books[] = $book;
+    }
+
+    public function removeBook($title) {
+        foreach ($this->books as $key => $book) {
+            if ($book->title === $title) {
+                unset($this->books[$key]);
+                echo "Book '" . $title . "' removed from the library.\n";
+                return;
+            }
+        }
+        echo "Book not found.\n";
+    }
+
+    public function listBooks() {
+        echo "Books in the library:\n";
+        foreach ($this->books as $book) {
+            echo $book->getDetails() . "\n";
+        }
+    }
+
+    public function __destruct() {
+        echo "The library '" . $this->name . "' is now closed.\n";
+    }
+}
+
+// Create instances of Book and Library
+$book1 = new Book("Fear of Flying", "Erica Jong", 21.00);
+$book2 = new Book("In the Heart of the Sea", "Nathaniel Philbrick", 14.71);
+$library = new Library("City Library");
+
+// Add books to the library
+$library->addBook($book1);
+$library->addBook($book2);
+
+// Update the stock of a book
+$book1->updateStock(50);
+
+// List all books in the library
+$library->listBooks();
+
+// Remove a book from the library
+$library->removeBook("Fear of Flying");
+
+// List all books in the library after removal
+$library->listBooks();
+?>
